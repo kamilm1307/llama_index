@@ -38,7 +38,7 @@ class LLMRerank(BaseNodePostprocessor):
         self._service_context = service_context or ServiceContext.from_defaults()
         self._top_n = top_n
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
@@ -54,7 +54,7 @@ class LLMRerank(BaseNodePostprocessor):
             query_str = query_bundle.query_str
             fmt_batch_str = self._format_node_batch_fn(nodes_batch)
             # call each batch independently
-            raw_response = self._service_context.llm_predictor.predict(
+            raw_response = await self._service_context.llm_predictor.apredict(
                 self._choice_select_prompt,
                 context_str=fmt_batch_str,
                 query_str=query_str,

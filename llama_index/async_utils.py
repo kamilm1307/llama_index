@@ -1,8 +1,10 @@
 """Async utils."""
 import asyncio
 from itertools import zip_longest
-from typing import Any, Coroutine, Iterable, List
+from typing import Any, Coroutine, Iterable, List, Awaitable, Callable, TypeVar
 
+T = TypeVar('T')
+AsyncCallable = Callable[..., Awaitable[T]]
 
 def run_async_tasks(
     tasks: List[Coroutine],
@@ -55,3 +57,20 @@ async def batch_gather(
         if verbose:
             print(f"Completed {len(output)} out of {len(tasks)} tasks")
     return output
+
+def run_sync(awaitable: Awaitable[T]) -> T:
+    """
+    Run an awaitable synchronously.
+    """
+    loop = asyncio.get_event_loop()
+    return loop.run_until_complete(awaitable)
+
+
+def patch_sync(func_async: AsyncCallable[T]) -> Callable[..., T]:
+    """
+    Given an async function, return a sync function that runs the async function.
+    """
+    def patched_sync(*args: Any, **kwargs: Any) -> T:
+        return run_sync(func_async(*args, **kwargs))
+
+    return patched_sync

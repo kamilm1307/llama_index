@@ -27,13 +27,18 @@ class BasePydanticNodePostprocessor(BaseModel, BaseNodePostprocessor):
     class Config:
         arbitrary_types_allowed = True
 
-    @abstractmethod
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
     ) -> List[NodeWithScore]:
-        """Postprocess nodes."""
+        """
+        Async Postprocess nodes.
+
+        Default implementation is to call the synchronous postprocess_nodes.
+        Developers are encouraged override this method to provide an async implementation for subclasses.
+        """
+        return self.postprocess_nodes(nodes, query_bundle)
 
 
 class KeywordNodePostprocessor(BasePydanticNodePostprocessor):
@@ -42,7 +47,7 @@ class KeywordNodePostprocessor(BasePydanticNodePostprocessor):
     required_keywords: List[str] = Field(default_factory=list)
     exclude_keywords: List[str] = Field(default_factory=list)
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
@@ -77,7 +82,7 @@ class SimilarityPostprocessor(BasePydanticNodePostprocessor):
 
     similarity_cutoff: float = Field(default=None)
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
@@ -174,7 +179,7 @@ class PrevNextNodePostprocessor(BasePydanticNodePostprocessor):
             raise ValueError(f"Invalid mode: {v}")
         return v
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
@@ -304,7 +309,7 @@ class AutoPrevNextNodePostprocessor(BasePydanticNodePostprocessor):
             return "none"
         raise ValueError(f"Invalid prediction: {raw_pred}")
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,

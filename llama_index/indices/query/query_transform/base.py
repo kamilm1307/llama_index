@@ -1,5 +1,6 @@
 """Query transform."""
 
+import asyncio
 import dataclasses
 from abc import abstractmethod
 from typing import Dict, Optional, cast
@@ -20,6 +21,7 @@ from llama_index.llm_predictor.base import BaseLLMPredictor
 from llama_index.prompts import BasePromptTemplate
 from llama_index.prompts.default_prompts import DEFAULT_HYDE_PROMPT
 from llama_index.response.schema import Response
+from llama_index.async_utils import run_sync
 
 
 class BaseQueryTransform:
@@ -32,11 +34,21 @@ class BaseQueryTransform:
 
     """
 
-    @abstractmethod
     def _run(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
+        return run_sync(self._arun(query_bundle, metadata))
+    
+    @abstractmethod
+    async def _arun(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
         """Run query transform."""
 
     def run(
+        self,
+        query_bundle_or_str: QueryType,
+        metadata: Optional[Dict] = None,
+    ) -> QueryBundle:
+        return run_sync(self._arun(query_bundle_or_str, metadata=metadata))
+
+    async def arun(
         self,
         query_bundle_or_str: QueryType,
         metadata: Optional[Dict] = None,
@@ -51,7 +63,7 @@ class BaseQueryTransform:
         else:
             query_bundle = query_bundle_or_str
 
-        return self._run(query_bundle, metadata=metadata)
+        return await self._arun(query_bundle, metadata=metadata)
 
     def __call__(
         self,
@@ -61,6 +73,18 @@ class BaseQueryTransform:
         """Run query processor."""
         return self.run(query_bundle_or_str, metadata=metadata)
 
+    def call(
+        self,
+        query_bundle_or_str: QueryType,
+        metadata: Optional[Dict] = None,
+    ) -> QueryBundle:
+        """Alias for __call__."""
+        return self(query_bundle_or_str, metadata=metadata)
+
+    async def acall(self, query_bundle_or_str: QueryType, metadata: Optional[Dict]):
+        """Run query processor async."""
+        return self.arun(query_bundle_or_str, metadata=metadata)
+
 
 class IdentityQueryTransform(BaseQueryTransform):
     """Identity query transform.
@@ -69,7 +93,7 @@ class IdentityQueryTransform(BaseQueryTransform):
 
     """
 
-    def _run(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
+    async def _arun(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
         """Run query transform."""
         return query_bundle
 
@@ -105,11 +129,11 @@ class HyDEQueryTransform(BaseQueryTransform):
         self._hyde_prompt = hyde_prompt or DEFAULT_HYDE_PROMPT
         self._include_original = include_original
 
-    def _run(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
+    async def _arun(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
         """Run query transform."""
         # TODO: support generating multiple hypothetical docs
         query_str = query_bundle.query_str
-        hypothetical_doc = self._llm_predictor.predict(
+        hypothetical_doc = await self._llm_predictor.apredict(
             self._hyde_prompt, context_str=query_str
         )
         embedding_strs = [hypothetical_doc]
@@ -147,7 +171,7 @@ class DecomposeQueryTransform(BaseQueryTransform):
         )
         self.verbose = verbose
 
-    def _run(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
+    async def _arun(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
         """Run query transform."""
         # currently, just get text from the index structure
         index_summary = cast(str, metadata.get("index_summary", "None"))
@@ -155,7 +179,7 @@ class DecomposeQueryTransform(BaseQueryTransform):
         # given the text from the index, we can use the query bundle to generate
         # a new query bundle
         query_str = query_bundle.query_str
-        new_query_str = self._llm_predictor.predict(
+        new_query_str = await self._llm_predictor.apredict(
             self._decompose_query_prompt,
             query_str=query_str,
             context_str=index_summary,
@@ -194,7 +218,7 @@ class ImageOutputQueryTransform(BaseQueryTransform):
         self._width = width
         self._query_prompt = query_prompt or DEFAULT_IMAGE_OUTPUT_PROMPT
 
-    def _run(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
+    def _arun(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
         """Run query transform."""
         del metadata  # Unused
         new_query_str = self._query_prompt.format(
@@ -232,7 +256,7 @@ class StepDecomposeQueryTransform(BaseQueryTransform):
         )
         self.verbose = verbose
 
-    def _run(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
+    async def _arun(self, query_bundle: QueryBundle, metadata: Dict) -> QueryBundle:
         """Run query transform."""
         index_summary = cast(
             str,
@@ -244,7 +268,7 @@ class StepDecomposeQueryTransform(BaseQueryTransform):
         # given the text from the index, we can use the query bundle to generate
         # a new query bundle
         query_str = query_bundle.query_str
-        new_query_str = self._llm_predictor.predict(
+        new_query_str = await self._llm_predictor.apredict(
             self._step_decompose_query_prompt,
             prev_reasoning=fmt_prev_reasoning,
             query_str=query_str,

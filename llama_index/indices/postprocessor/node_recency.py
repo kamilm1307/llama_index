@@ -61,7 +61,7 @@ class FixedRecencyPostprocessor(BasePydanticNodePostprocessor):
     # infer_recency_tmpl: str = Field(default=DEFAULT_INFER_RECENCY_TMPL)
     date_key: str = "date"
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
@@ -113,7 +113,7 @@ class EmbeddingRecencyPostprocessor(BasePydanticNodePostprocessor):
     similarity_cutoff: float = Field(default=0.7)
     query_embedding_tmpl: str = Field(default=DEFAULT_QUERY_EMBEDDING_TMPL)
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
@@ -138,7 +138,7 @@ class EmbeddingRecencyPostprocessor(BasePydanticNodePostprocessor):
                 node.node.get_content(metadata_mode=MetadataMode.EMBED),
             )
 
-        _, text_embeddings = embed_model.get_queued_text_embeddings()
+        _, text_embeddings = await embed_model.aget_queued_text_embeddings()
         node_ids_to_skip: Set[str] = set()
         for idx, node in enumerate(sorted_nodes):
             if node.node.node_id in node_ids_to_skip:
@@ -150,7 +150,7 @@ class EmbeddingRecencyPostprocessor(BasePydanticNodePostprocessor):
             query_text = self.query_embedding_tmpl.format(
                 context_str=node.node.get_content(metadata_mode=MetadataMode.EMBED),
             )
-            query_embedding = embed_model.get_query_embedding(query_text)
+            query_embedding = await embed_model.aget_query_embedding(query_text)
 
             for idx2 in range(idx + 1, len(sorted_nodes)):
                 if sorted_nodes[idx2].node.node_id in node_ids_to_skip:
@@ -181,7 +181,7 @@ class TimeWeightedPostprocessor(BasePydanticNodePostprocessor):
     now: Optional[float] = None
     top_k: int = 1
 
-    def postprocess_nodes(
+    async def apostprocess_nodes(
         self,
         nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,

@@ -2,12 +2,14 @@
 
 import logging
 from abc import ABC, abstractmethod
+import asyncio
 from typing import List, Optional, Sequence
 
 from llama_index.callbacks.base import CallbackManager
 from llama_index.indices.query.schema import QueryBundle, QueryType
 from llama_index.response.schema import RESPONSE_TYPE
 from llama_index.schema import NodeWithScore
+from llama_index.async_utils import run_sync
 
 logger = logging.getLogger(__name__)
 
@@ -17,11 +19,7 @@ class BaseQueryEngine(ABC):
         self.callback_manager = callback_manager or CallbackManager([])
 
     def query(self, str_or_query_bundle: QueryType) -> RESPONSE_TYPE:
-        with self.callback_manager.as_trace("query"):
-            if isinstance(str_or_query_bundle, str):
-                str_or_query_bundle = QueryBundle(str_or_query_bundle)
-            response = self._query(str_or_query_bundle)
-            return response
+        return run_sync(self.aquery(str_or_query_bundle))
 
     async def aquery(self, str_or_query_bundle: QueryType) -> RESPONSE_TYPE:
         with self.callback_manager.as_trace("query"):
@@ -33,6 +31,11 @@ class BaseQueryEngine(ABC):
     def retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         raise NotImplementedError(
             "This query engine does not support retrieve, use query directly"
+        )
+
+    async def aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+        raise NotImplementedError(
+            "This query engine does not support aretrieve, use aquery directly"
         )
 
     def synthesize(
@@ -55,9 +58,8 @@ class BaseQueryEngine(ABC):
             "This query engine does not support asynthesize, use aquery directly"
         )
 
-    @abstractmethod
     def _query(self, query_bundle: QueryBundle) -> RESPONSE_TYPE:
-        pass
+        return run_sync(self._aquery(query_bundle))
 
     @abstractmethod
     async def _aquery(self, query_bundle: QueryBundle) -> RESPONSE_TYPE:
