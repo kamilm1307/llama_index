@@ -332,7 +332,7 @@ class AutoPrevNextNodePostprocessor(BaseNodePostprocessor):
             raw_pred = cast(str, raw_pred)
             mode = self._parse_prediction(raw_pred)
 
-            logger.debug(f"> Postprocessor Predicted mode: {mode}")
+            logger.debug("> Postprocessor Predicted mode: %s", mode)
             if self.verbose:
                 print(f"> Postprocessor Predicted mode: {mode}")
 
