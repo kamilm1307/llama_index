@@ -1,6 +1,11 @@
 import asyncio
+import dataclasses
+import json
 import logging
-from typing import Any, Callable, cast
+from datetime import date, datetime
+from typing import Any, Callable, Generator, cast
+
+from pydantic import BaseModel
 
 from llama_index.callbacks.base import CallbackManager
 
@@ -55,3 +60,28 @@ def trace_method(
         return async_wrapper if asyncio.iscoroutinefunction(func) else wrapper
 
     return decorator
+
+
+class SuperJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if dataclasses.is_dataclass(o):
+            return self.default(dataclasses.asdict(o))
+        if isinstance(o, BaseModel):
+            return self.default(o.model_dump())
+        if isinstance(o, (datetime, date)):
+            return o.isoformat()
+        if isinstance(o, Exception):
+            return str(o)
+        if isinstance(o, str):
+            return o
+        if isinstance(o, list):
+            return [self.default(x) for x in o]
+        if isinstance(o, dict):
+            return {k: self.default(v) for k, v in o.items()}
+        if isinstance(o, Generator):
+            return None
+        return super().default(o)
+
+
+def superjson_dumps(data):
+    return json.dumps(data, cls=SuperJSONEncoder)
