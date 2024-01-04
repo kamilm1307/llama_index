@@ -22,6 +22,7 @@ from tenacity.stop import stop_base
 from llama_index.bridge.pydantic import BaseModel
 from llama_index.llms.generic_utils import get_from_param_or_env
 from llama_index.llms.types import ChatMessage
+from llama_index.logger import logger
 
 DEFAULT_OPENAI_API_TYPE = "open_ai"
 DEFAULT_OPENAI_API_BASE = "https://api.openai.com/v1"
@@ -122,7 +123,6 @@ API keys can be found or created at \
 https://platform.openai.com/account/api-keys
 """
 
-logger = logging.getLogger(__name__)
 
 OpenAIToolCall = Union[ChatCompletionMessageToolCall, ChoiceDeltaToolCall]
 

@@ -1,13 +1,9 @@
 """Optimization related classes and functions."""
-import logging
 from typing import Any, Dict, List, Optional
 
 from llama_index.bridge.pydantic import Field, PrivateAttr
 from llama_index.postprocessor.types import BaseNodePostprocessor
 from llama_index.schema import MetadataMode, NodeWithScore, QueryBundle, TextNode
-
-logger = logging.getLogger(__name__)
-
 
 DEFAULT_INSTRUCTION_STR = "Given the context, please answer the final question"
 

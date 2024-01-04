@@ -1,11 +1,11 @@
 import logging
 from argparse import ArgumentParser, Namespace
 
+from llama_index.logger import logger
+
 from .cli_add import register_add_cli
 from .cli_init import register_init_cli
 from .cli_query import register_query_cli
-
-logger = logging.getLogger(__name__)
 
 
 def main() -> None:

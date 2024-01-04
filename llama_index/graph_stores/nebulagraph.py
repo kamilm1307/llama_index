@@ -1,5 +1,4 @@
 """NebulaGraph graph store index."""
-import logging
 import os
 from string import Template
 from typing import Any, Dict, List, Optional
@@ -13,8 +12,7 @@ RETRY_TIMES = 3
 WAIT_MIN_SECONDS = 0.5
 WAIT_MAX_SECONDS = 10
 
-logger = logging.getLogger(__name__)
-
+from llama_index.logger import logger
 
 rel_query_sample_edge = Template(
     """

@@ -3,7 +3,6 @@
 An index that that is built on top of an existing vector store.
 
 """
-import logging
 from typing import Any, Dict, List, Optional, Sequence
 
 from llama_index.async_utils import run_async_tasks
@@ -17,8 +16,6 @@ from llama_index.storage.docstore.types import RefDocInfo
 from llama_index.storage.storage_context import StorageContext
 from llama_index.utils import iter_batch
 from llama_index.vector_stores.types import VectorStore
-
-logger = logging.getLogger(__name__)
 
 
 class VectorStoreIndex(BaseIndex[IndexDict]):

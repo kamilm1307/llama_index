@@ -1,11 +1,9 @@
-import logging
 from typing import Any, List, Optional
 
 from llama_index.bridge.pydantic import Field, PrivateAttr
 from llama_index.callbacks import CallbackManager
 from llama_index.embeddings.base import DEFAULT_EMBED_BATCH_SIZE, BaseEmbedding
-
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 EXAMPLE_URL = "https://clarifai.com/anthropic/completion/models/claude-v2"
 

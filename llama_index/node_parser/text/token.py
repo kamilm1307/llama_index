@@ -1,18 +1,16 @@
 """Token splitter."""
-import logging
 from typing import Callable, List, Optional
 
 from llama_index.bridge.pydantic import Field, PrivateAttr
 from llama_index.callbacks.base import CallbackManager
 from llama_index.callbacks.schema import CBEventType, EventPayload
 from llama_index.constants import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE
+from llama_index.logger import logger
 from llama_index.node_parser.interface import MetadataAwareTextSplitter
 from llama_index.node_parser.node_utils import default_id_func
 from llama_index.node_parser.text.utils import split_by_char, split_by_sep
 from llama_index.schema import Document
 from llama_index.utils import get_tokenizer
-
-_logger = logging.getLogger(__name__)
 
 # NOTE: this is the number of tokens we reserve for metadata formatting
 DEFAULT_METADATA_FORMAT_LEN = 2
@@ -191,7 +189,7 @@ class TokenTextSplitter(MetadataAwareTextSplitter):
         for split in splits:
             split_len = len(self._tokenizer(split))
             if split_len > chunk_size:
-                _logger.warning(
+                logger.warning(
                     f"Got a split of size {split_len}, ",
                     f"larger than chunk size {chunk_size}.",
                 )

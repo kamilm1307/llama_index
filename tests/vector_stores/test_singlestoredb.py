@@ -1,4 +1,3 @@
-import logging
 import os
 from typing import Generator
 
@@ -10,8 +9,6 @@ from llama_index.vector_stores.types import (
     MetadataFilters,
     VectorStoreQuery,
 )
-
-logger = logging.getLogger(__name__)
 
 singlestoredb_found = False
 

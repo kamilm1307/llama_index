@@ -1,4 +1,3 @@
-import logging
 from typing import Any, List, Optional, cast
 
 from llama_index.callbacks.base import CallbackManager
@@ -12,6 +11,7 @@ from llama_index.indices.vector_store.retrievers.auto_retriever.output_parser im
 from llama_index.indices.vector_store.retrievers.auto_retriever.prompts import (
     DEFAULT_VECTOR_STORE_QUERY_PROMPT_TMPL,
 )
+from llama_index.logger import logger
 from llama_index.output_parsers.base import OutputParserException, StructuredOutput
 from llama_index.prompts.base import PromptTemplate
 from llama_index.prompts.mixin import PromptDictType
@@ -24,8 +24,6 @@ from llama_index.vector_stores.types import (
     VectorStoreQueryMode,
     VectorStoreQuerySpec,
 )
-
-_logger = logging.getLogger(__name__)
 
 
 class VectorIndexAutoRetriever(BaseRetriever):
@@ -144,7 +142,7 @@ class VectorIndexAutoRetriever(BaseRetriever):
             )
             query_spec = cast(VectorStoreQuerySpec, structured_output.parsed_output)
         except OutputParserException:
-            _logger.warning("Failed to parse query spec, using defaults as fallback.")
+            logger.warning("Failed to parse query spec, using defaults as fallback.")
             query_spec = VectorStoreQuerySpec(
                 query=query_bundle.query_str,
                 filters=[],
@@ -155,12 +153,12 @@ class VectorIndexAutoRetriever(BaseRetriever):
         # insert 0 vector if query is empty and default_empty_query_vector is not None
         new_query_bundle = self._get_query_bundle(query_spec.query)
 
-        _logger.info(f"Using query str: {query_spec.query}")
+        logger.info(f"Using query str: {query_spec.query}")
         filter_list = [
             (filter.key, filter.operator.value, filter.value)
             for filter in query_spec.filters
         ]
-        _logger.info(f"Using filters: {filter_list}")
+        logger.info(f"Using filters: {filter_list}")
         if self._verbose:
             print(f"Using query str: {query_spec.query}")
             print(f"Using filters: {filter_list}")
@@ -178,7 +176,7 @@ class VectorIndexAutoRetriever(BaseRetriever):
         if query_spec.top_k is not None:
             similarity_top_k = min(query_spec.top_k, self._max_top_k, similarity_top_k)
 
-        _logger.info(f"Using top_k: {similarity_top_k}")
+        logger.info(f"Using top_k: {similarity_top_k}")
 
         retriever = VectorIndexRetriever(
             self._index,

@@ -1,7 +1,6 @@
 """Adapter utils."""
 
 import json
-import logging
 import os
 from abc import abstractmethod
 from typing import Callable, Dict
@@ -9,8 +8,6 @@ from typing import Callable, Dict
 import torch
 import torch.nn.functional as F
 from torch import Tensor, nn
-
-logger = logging.getLogger(__name__)
 
 
 class BaseAdapter(nn.Module):

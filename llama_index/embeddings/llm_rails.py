@@ -1,12 +1,10 @@
-import logging
 from typing import Any, List
 
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
 from llama_index.embeddings.base import BaseEmbedding
-
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 
 class LLMRailsEmbedding(BaseEmbedding):

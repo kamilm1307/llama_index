@@ -1,4 +1,3 @@
-import logging
 from typing import Callable, List, Optional, cast
 
 from nltk.stem import PorterStemmer
@@ -8,10 +7,9 @@ from llama_index.constants import DEFAULT_SIMILARITY_TOP_K
 from llama_index.core import BaseRetriever
 from llama_index.indices.keyword_table.utils import simple_extract_keywords
 from llama_index.indices.vector_store.base import VectorStoreIndex
+from llama_index.logger import logger
 from llama_index.schema import BaseNode, NodeWithScore, QueryBundle
 from llama_index.storage.docstore.types import BaseDocumentStore
-
-logger = logging.getLogger(__name__)
 
 
 def tokenize_remove_stopwords(text: str) -> List[str]:

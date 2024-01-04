@@ -1,10 +1,9 @@
 """General node utils."""
 
-
-import logging
 import uuid
 from typing import List, Optional, Protocol, runtime_checkable
 
+from llama_index.logger import logger
 from llama_index.schema import (
     BaseNode,
     Document,
@@ -14,8 +13,6 @@ from llama_index.schema import (
     TextNode,
 )
 from llama_index.utils import truncate_text
-
-logger = logging.getLogger(__name__)
 
 
 @runtime_checkable

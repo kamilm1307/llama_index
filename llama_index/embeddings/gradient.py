@@ -1,4 +1,3 @@
-import logging
 from typing import Any, List, Optional
 
 from llama_index.bridge.pydantic import Field, PrivateAttr
@@ -7,9 +6,7 @@ from llama_index.embeddings.base import (
     BaseEmbedding,
     Embedding,
 )
-
-logger = logging.getLogger(__name__)
-
+from llama_index.logger import logger
 
 # For bge models that Gradient AI provides, it is suggested to add the instruction for retrieval.
 # Reference: https://huggingface.co/BAAI/bge-large-en-v1.5#model-list

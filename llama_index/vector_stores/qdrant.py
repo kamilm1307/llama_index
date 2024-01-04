@@ -3,10 +3,10 @@
 An index that is built on top of an existing Qdrant collection.
 
 """
-import logging
 from typing import Any, List, Optional, Tuple, cast
 
 from llama_index.bridge.pydantic import Field, PrivateAttr
+from llama_index.logger import logger
 from llama_index.schema import BaseNode, MetadataMode, TextNode
 from llama_index.utils import iter_batch
 from llama_index.vector_stores.qdrant_utils import (
@@ -27,7 +27,6 @@ from llama_index.vector_stores.utils import (
     node_to_metadata_dict,
 )
 
-logger = logging.getLogger(__name__)
 import_err_msg = (
     "`qdrant-client` package not found, please run `pip install qdrant-client`"
 )

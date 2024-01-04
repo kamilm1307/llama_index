@@ -1,6 +1,5 @@
 """OpenAI Finetuning."""
 
-import logging
 import os
 import time
 from typing import Any, Optional
@@ -14,8 +13,7 @@ from llama_index.finetuning.openai.validate_json import validate_json
 from llama_index.finetuning.types import BaseLLMFinetuneEngine
 from llama_index.llms import OpenAI
 from llama_index.llms.llm import LLM
-
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 
 class OpenAIFinetuneEngine(BaseLLMFinetuneEngine):

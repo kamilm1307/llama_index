@@ -1,15 +1,13 @@
 """Sentence Transformer Finetuning Engine."""
 
-import logging
 from typing import Any, List, Optional, Tuple, Type, cast
 
 from llama_index.embeddings.adapter import AdapterEmbeddingModel
 from llama_index.embeddings.base import BaseEmbedding
 from llama_index.finetuning.embeddings.common import EmbeddingQAFinetuneDataset
 from llama_index.finetuning.types import BaseEmbeddingFinetuneEngine
+from llama_index.logger import logger
 from llama_index.utils import infer_torch_device
-
-logger = logging.getLogger(__name__)
 
 
 class EmbeddingAdapterFinetuneEngine(BaseEmbeddingFinetuneEngine):

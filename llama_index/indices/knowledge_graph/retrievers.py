@@ -1,5 +1,4 @@
 """KG Retrievers."""
-import logging
 from collections import defaultdict
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
@@ -27,7 +26,7 @@ DEFAULT_NODE_SCORE = 1000.0
 GLOBAL_EXPLORE_NODE_LIMIT = 3
 REL_TEXT_LIMIT = 30
 
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 
 class KGRetrieverMode(str, Enum):

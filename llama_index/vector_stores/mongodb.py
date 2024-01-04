@@ -4,10 +4,10 @@ An index that that is built on top of an existing vector store.
 
 """
 
-import logging
 import os
 from typing import Any, Dict, List, Optional, cast
 
+from llama_index.logger import logger
 from llama_index.schema import BaseNode, MetadataMode, TextNode
 from llama_index.vector_stores.types import (
     MetadataFilters,
@@ -20,8 +20,6 @@ from llama_index.vector_stores.utils import (
     metadata_dict_to_node,
     node_to_metadata_dict,
 )
-
-logger = logging.getLogger(__name__)
 
 
 def _to_mongodb_filter(standard_filters: MetadataFilters) -> Dict:

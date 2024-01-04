@@ -1,5 +1,4 @@
 """Simple reader that reads files of different formats from a directory."""
-import logging
 import mimetypes
 import os
 from datetime import datetime
@@ -63,7 +62,7 @@ def default_file_metadata_func(file_path: str) -> Dict:
     }
 
 
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 
 class SimpleDirectoryReader(BaseReader):

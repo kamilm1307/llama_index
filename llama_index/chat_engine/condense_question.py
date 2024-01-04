@@ -1,4 +1,3 @@
-import logging
 from threading import Thread
 from typing import Any, List, Optional, Type
 
@@ -13,14 +12,12 @@ from llama_index.core import BaseQueryEngine
 from llama_index.llm_predictor.base import LLMPredictorType
 from llama_index.llms.generic_utils import messages_to_history_str
 from llama_index.llms.types import ChatMessage, MessageRole
+from llama_index.logger import logger
 from llama_index.memory import BaseMemory, ChatMemoryBuffer
 from llama_index.prompts.base import BasePromptTemplate, PromptTemplate
 from llama_index.response.schema import RESPONSE_TYPE, StreamingResponse
 from llama_index.service_context import ServiceContext
 from llama_index.tools import ToolOutput
-
-logger = logging.getLogger(__name__)
-
 
 DEFAULT_TEMPLATE = """\
 Given a conversation (between Human and Assistant) and a follow up message from Human, \

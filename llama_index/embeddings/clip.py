@@ -1,4 +1,3 @@
-import logging
 from typing import Any, List
 
 from llama_index.bridge.pydantic import Field, PrivateAttr
@@ -7,10 +6,8 @@ from llama_index.embeddings.base import (
     Embedding,
 )
 from llama_index.embeddings.multi_modal_base import MultiModalEmbedding
+from llama_index.logger import logger
 from llama_index.schema import ImageType
-
-logger = logging.getLogger(__name__)
-
 
 AVAILABLE_CLIP_MODELS = (
     "RN50",

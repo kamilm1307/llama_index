@@ -3,14 +3,12 @@
 Contains simple parser for mbox files.
 
 """
-import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from llama_index.logger import logger
 from llama_index.readers.base import BaseReader
 from llama_index.schema import Document
-
-logger = logging.getLogger(__name__)
 
 
 class MboxReader(BaseReader):

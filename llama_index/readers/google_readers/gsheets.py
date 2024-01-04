@@ -1,6 +1,5 @@
 """Google sheets reader."""
 
-import logging
 import os
 from typing import Any, List
 
@@ -9,7 +8,7 @@ from llama_index.schema import Document
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 # Copyright 2019 Google LLC
 #

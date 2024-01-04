@@ -155,7 +155,7 @@ def get_provider(model: str) -> Provider:
     return PROVIDERS[provider_name]
 
 
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 
 def _create_retry_decorator(client: Any, max_retries: int) -> Callable[[Any], Any]:

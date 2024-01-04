@@ -1,12 +1,10 @@
 """Psychic reader."""
-import logging
 import os
 from typing import List, Optional
 
+from llama_index.logger import logger
 from llama_index.readers.base import BaseReader
 from llama_index.schema import Document
-
-logger = logging.getLogger(__name__)
 
 
 class PsychicReader(BaseReader):

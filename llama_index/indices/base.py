@@ -1,5 +1,4 @@
 """Base index classes."""
-import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, List, Optional, Sequence, Type, TypeVar, cast
 
@@ -9,6 +8,7 @@ from llama_index.data_structs.data_structs import IndexStruct
 from llama_index.ingestion import run_transformations
 from llama_index.llms.openai import OpenAI
 from llama_index.llms.openai_utils import is_function_calling_model
+from llama_index.logger import logger
 from llama_index.schema import BaseNode, Document
 from llama_index.service_context import ServiceContext
 from llama_index.storage.docstore.types import BaseDocumentStore, RefDocInfo
@@ -16,8 +16,6 @@ from llama_index.storage.storage_context import StorageContext
 
 IS = TypeVar("IS", bound=IndexStruct)
 IndexType = TypeVar("IndexType", bound="BaseIndex")
-
-logger = logging.getLogger(__name__)
 
 
 class BaseIndex(Generic[IS], ABC):

@@ -5,10 +5,10 @@ An index based on a DB table with vector search capabilities,
 powered by the astrapy library
 
 """
-import logging
 from typing import Any, Dict, List, Optional, cast
 
 from llama_index.indices.query.embedding_utils import get_top_k_mmr_embeddings
+from llama_index.logger import logger
 from llama_index.schema import BaseNode, MetadataMode
 from llama_index.vector_stores.types import (
     ExactMatchFilter,
@@ -24,8 +24,6 @@ from llama_index.vector_stores.utils import (
     metadata_dict_to_node,
     node_to_metadata_dict,
 )
-
-_logger = logging.getLogger(__name__)
 
 DEFAULT_MMR_PREFETCH_FACTOR = 4.0
 MAX_INSERT_BATCH_SIZE = 20
@@ -81,7 +79,7 @@ class AstraDBVectorStore(VectorStore):
         self._embedding_dimension = embedding_dimension
         self._ttl_seconds = ttl_seconds
 
-        _logger.debug("Creating the Astra DB table")
+        logger.debug("Creating the Astra DB table")
 
         # Build the Astra DB object
         self._astra_db = AstraDB(
@@ -128,7 +126,7 @@ class AstraDBVectorStore(VectorStore):
             )
 
         # Log the number of rows being added
-        _logger.debug(f"Adding {len(nodes_list)} rows to table")
+        logger.debug(f"Adding {len(nodes_list)} rows to table")
 
         # Initialize an empty list to hold the batches
         batched_list = []
@@ -140,7 +138,7 @@ class AstraDBVectorStore(VectorStore):
 
         # Perform the bulk insert
         for i, batch in enumerate(batched_list):
-            _logger.debug(f"Processing batch #{i + 1} of size {len(batch)}")
+            logger.debug(f"Processing batch #{i + 1} of size {len(batch)}")
 
             # Go to astrapy to perform the bulk insert
             self._astra_db_collection.insert_many(batch)
@@ -156,7 +154,7 @@ class AstraDBVectorStore(VectorStore):
             ref_doc_id (str): The id of the document to delete.
 
         """
-        _logger.debug("Deleting a document from the Astra table")
+        logger.debug("Deleting a document from the Astra table")
 
         self._astra_db_collection.delete(id=ref_doc_id, **delete_kwargs)
 

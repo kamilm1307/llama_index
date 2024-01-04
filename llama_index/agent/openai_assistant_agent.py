@@ -1,7 +1,6 @@
 """OpenAI Assistant Agent."""
 import asyncio
 import json
-import logging
 import time
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
@@ -21,9 +20,6 @@ from llama_index.chat_engine.types import (
 )
 from llama_index.llms.types import ChatMessage, MessageRole
 from llama_index.tools import BaseTool, ToolOutput, adapt_to_async_tool
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.WARNING)
 
 
 def from_openai_thread_message(thread_message: Any) -> ChatMessage:

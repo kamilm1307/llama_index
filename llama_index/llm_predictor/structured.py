@@ -1,7 +1,6 @@
 """Structured LLM Predictor."""
 
 
-import logging
 from typing import Any, Optional
 
 from deprecated import deprecated
@@ -9,8 +8,6 @@ from deprecated import deprecated
 from llama_index.llm_predictor.base import LLMPredictor
 from llama_index.prompts.base import BasePromptTemplate
 from llama_index.types import TokenGen
-
-logger = logging.getLogger(__name__)
 
 
 @deprecated("StructuredLLMPredictor is deprecated. Use llm.structured_predict().")

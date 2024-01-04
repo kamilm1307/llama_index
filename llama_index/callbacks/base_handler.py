@@ -1,11 +1,9 @@
-import logging
 from abc import ABC, abstractmethod
 from contextvars import ContextVar
 from typing import Any, Dict, List, Optional
 
 from llama_index.callbacks.schema import BASE_TRACE_EVENT, CBEventType
 
-logger = logging.getLogger(__name__)
 global_stack_trace = ContextVar("trace", default=[BASE_TRACE_EVENT])
 
 

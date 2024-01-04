@@ -1,7 +1,6 @@
 """Simple graph store index."""
 
 import json
-import logging
 import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
@@ -14,8 +13,7 @@ from llama_index.graph_stores.types import (
     DEFAULT_PERSIST_FNAME,
     GraphStore,
 )
-
-logger = logging.getLogger(__name__)
+from llama_index.logger import logger
 
 
 @dataclass
