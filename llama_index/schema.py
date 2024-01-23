@@ -377,7 +377,7 @@ class TextNode(BaseNode):
             "{value} placeholders."
         ),
     )
-    metadata_seperator: str = Field(
+    metadata_separator: str = Field(
         default="\n",
         description="Separator between metadata fields when converting to string.",
     )
@@ -421,7 +421,7 @@ class TextNode(BaseNode):
                 if key in usable_metadata_keys:
                     usable_metadata_keys.remove(key)
 
-        return self.metadata_seperator.join(
+        return self.metadata_separator.join(
             [
                 self.metadata_template.format(key=key, value=str(value))
                 for key, value in self.metadata.items()
