@@ -67,6 +67,8 @@ class NotionPageReader(BasePydanticReader):
                 "GET", block_url, headers=self.headers, json=query_dict
             )
             data = res.json()
+            if res.status_code != 200:
+                raise Exception(f'HTTP error {res.status_code}: {data.get("message")}')
 
             for result in data["results"]:
                 result_type = result["type"]
