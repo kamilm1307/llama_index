@@ -48,7 +48,10 @@ def test_instance_creation_with_create_method() -> None:
     assert isinstance(store, WordliftVectorStore)
 
 
-# @pytest.mark.asyncio
+async def async_mock_for_add(nodes):
+    return "dummy_key"
+
+
 def test_add(
     wordlift_vector_store,
 ):
@@ -59,7 +62,9 @@ def test_add(
     ]
 
     # Mock the key provider behavior
-    wordlift_vector_store.key_provider.for_add.return_value = "dummy_key"
+    wordlift_vector_store.key_provider.for_add = AsyncMock(
+        side_effect=async_mock_for_add
+    )
 
     # Mock NodeRequest class
     with patch(
@@ -88,11 +93,11 @@ def test_delete(wordlift_vector_store):
     wordlift_vector_store.delete("dummy_id")
 
 
-# @pytest.mark.asyncio
 def test_query(wordlift_vector_store):
     # Mock the key provider behavior
-    wordlift_vector_store.key_provider.for_query.return_value = "dummy_key"
-
+    wordlift_vector_store.key_provider.for_query = AsyncMock(
+        side_effect=async_mock_for_add
+    )
     # Mock VectorSearchQueryRequest class
     with patch(
         "llama_index.vector_stores.wordlift.base.VectorSearchQueryRequest"
