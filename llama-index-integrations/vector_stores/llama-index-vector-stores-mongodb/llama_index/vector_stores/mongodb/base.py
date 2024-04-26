@@ -103,7 +103,7 @@ class MongoDBAtlasVectorSearch(BasePydanticVectorStore):
         db_name: str = "default_db",
         collection_name: str = "default_collection",
         index_name: str = "default",
-        id_key: str = "id",
+        id_key: str = "_id",
         embedding_key: str = "embedding",
         text_key: str = "text",
         metadata_key: str = "metadata",
@@ -193,7 +193,7 @@ class MongoDBAtlasVectorSearch(BasePydanticVectorStore):
 
         """
         # delete by filtering on the doc_id metadata
-        self._collection.delete_one(
+        self._collection.delete_many(
             filter={self._metadata_key + ".ref_doc_id": ref_doc_id}, **delete_kwargs
         )
 
