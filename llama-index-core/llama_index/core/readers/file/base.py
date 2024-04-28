@@ -4,6 +4,8 @@ import os
 import logging
 import mimetypes
 import multiprocessing
+import tempfile
+import magic
 import warnings
 from datetime import datetime
 from functools import reduce
@@ -18,6 +20,38 @@ from llama_index.core.readers.base import BaseReader
 from llama_index.core.async_utils import run_jobs, get_asyncio_module
 from llama_index.core.schema import Document
 from tqdm import tqdm
+
+
+def _try_loading_file_extension_by_mime_type() -> Dict[str, str]:
+    """
+    Returns a dictionary mapping MIME types to their corresponding file extensions.
+    Attempts to import the 'magic' module, which is used for file type identification.
+    """
+    try:
+        import magic
+    except ImportError:
+        raise ImportError("The 'magic' module is not installed. Please install it to enable MIME type detection.")
+
+    mime_to_extension = {
+        'application/pdf': '.pdf',
+        'image/jpeg': '.jpg',
+        'image/png': '.png',
+        'text/plain': '.txt',
+        'text/csv': '.csv',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+        'application/vnd.ms-powerpoint': '.ppt',
+        'application/vnd.ms-powerpoint.presentation.macroenabled.12': '.pptm',
+        'application/vnd.hwp': '.hwp',
+        'application/epub+zip': '.epub',
+        'text/markdown': '.md',
+        'application/mbox': '.mbox',
+        'application/x-ipynb+json': '.ipynb',
+        'audio/mpeg': '.mp3',
+        'video/mp4': '.mp4',
+        'image/jpeg': '.jpeg'  # This entry will take precedence over the previous '.jpg' entry for 'image/jpeg'
+    }
+    return mime_to_extension
 
 
 def _try_loading_included_file_formats() -> Dict[str, Type[BaseReader]]:
@@ -172,6 +206,7 @@ class SimpleDirectoryReader(BaseReader):
     """
 
     supported_suffix_fn: Callable = _try_loading_included_file_formats
+    mime_types_fn: Callable = _try_loading_file_extension_by_mime_type
 
     def __init__(
         self,
@@ -642,3 +677,34 @@ class SimpleDirectoryReader(BaseReader):
 
             if len(documents) > 0:
                 yield documents
+
+
+    @staticmethod
+    def load_file_from_binary(
+            binary_data,
+            encoding: str = "utf-8",
+            errors: str = "ignore",
+            raise_on_error: bool = False,
+    ):
+        default_mime_types_map = SimpleDirectoryReader.mime_types_fn()
+        documents: List[Document] = []
+
+        # use magic to get MIME type from binary data
+        mime_type = magic.from_buffer(binary_data, mime=True)
+        file_suffix = default_mime_types_map.get(mime_type, '.bin')
+
+        try:
+            # save a tempfile
+            with tempfile.NamedTemporaryFile(suffix=file_suffix, delete=False) as temp_file:
+                temp_file.write(binary_data)
+                temp_file.flush()
+                temp_filename = temp_file.name
+
+            documents = SimpleDirectoryReader.load_file(Path(temp_filename), None, {})
+
+        finally:
+            # Ensure the temporary file is deleted
+            if os.path.exists(temp_filename):
+                os.remove(temp_filename)
+
+        return documents
